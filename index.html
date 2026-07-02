@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imara Precast and Concrete — Delivery log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --concrete:#E7E3D8; --concrete-dark:#C9C3B3; --ink:#2A2822; --ink-soft:#6B6659;
+    --card:#FAF8F3; --rust:#B5502E; --rust-dark:#8A3A1F; --steel:#4A5A5E; --line:#D8D3C4;
+    --good:#3B6B4A; --good-bg:#E6EFE7; --bad-bg:#F5E5DE;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--concrete);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+  header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--ink);padding-bottom:16px;margin-bottom:12px;flex-wrap:wrap;gap:12px}
+  header h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;margin:0;letter-spacing:-0.02em}
+  header p{margin:4px 0 0;color:var(--ink-soft);font-size:13px;text-transform:uppercase;letter-spacing:0.08em}
+  .batch-mark{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--rust);border:1px solid var(--rust);padding:4px 10px;letter-spacing:0.04em}
+  #role-badge{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--steel);border:1px solid var(--steel);padding:4px 10px}
+  .offline-note{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--steel);padding:10px 14px;font-size:12px;color:var(--ink-soft);margin-bottom:24px;line-height:1.5}
+  .btn-ghost{font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--concrete-dark);color:var(--ink-soft);cursor:pointer;border-radius:2px}
+  .btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--ink);border:1px solid var(--ink);margin-bottom:24px}
+  .metric{background:var(--card);padding:16px 18px}
+  .metric .label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-soft);margin:0 0 6px}
+  .metric .value{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;margin:0}
+  .metric.neg .value{color:var(--rust-dark)}
+  .metric.pos .value{color:var(--good)}
+  .panel{background:var(--card);border:1px solid var(--line);margin-bottom:24px}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px}
+  .panel-head h2{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin:0}
+  form{padding:18px}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:12px}
+  label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:4px}
+  input,select{width:100%;height:36px;border:1px solid var(--concrete-dark);background:#fff;padding:0 10px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--ink);border-radius:2px}
+  input:focus,select:focus{outline:2px solid var(--rust);outline-offset:1px}
+  .submit-row{display:flex;justify-content:flex-end;margin-top:4px}
+  .submit-row button{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;background:var(--rust);color:#fff;border:none;padding:10px 20px;cursor:pointer;border-radius:2px}
+  .submit-row button:hover{background:var(--rust-dark)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);padding:10px 12px;border-bottom:1px solid var(--ink)}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace}
+  td.name{font-family:'IBM Plex Sans',sans-serif}
+  tr:last-child td{border-bottom:none}
+  .badge{font-family:'IBM Plex Sans',sans-serif;font-size:11px;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.03em}
+  .badge.pos{background:var(--good-bg);color:var(--good)}
+  .badge.neg{background:var(--bad-bg);color:var(--rust-dark)}
+  .del{background:transparent;border:none;color:var(--ink-soft);cursor:pointer;font-size:12px;text-decoration:underline;font-family:'IBM Plex Sans',sans-serif}
+  .del:hover{color:var(--rust)}
+  .empty{padding:32px 18px;text-align:center;color:var(--ink-soft);font-size:14px}
+  .status{font-size:12px;color:var(--ink-soft);margin-top:6px}
+  .status.err{color:var(--rust)}
+  .filter-row{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .filter-row label{margin:0;font-size:12px;color:var(--ink-soft)}
+  .filter-row select{width:auto;min-width:160px}
+  .lock-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .lock-card{background:var(--card);border:1px solid var(--line);padding:32px 28px;max-width:340px;width:100%;text-align:center}
+  .lock-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;margin:0 0 8px}
+  .lock-sub{font-size:13px;color:var(--ink-soft);margin:0 0 18px;line-height:1.5}
+  .lock-card input{text-align:center;font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
+  .lock-card input[type="password"]{letter-spacing:0.3em}
+  .lock-card button{width:100%;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;background:var(--rust);color:#fff;border:none;padding:10px 20px;cursor:pointer;border-radius:2px;margin-top:4px}
+  .lock-card button:hover{background:var(--rust-dark)}
+</style>
+</head>
+<body>
+
+<div id="lock-screen" class="lock-screen">
+  <div class="lock-card">
+    <div id="setup-view" style="display:none">
+      <p class="lock-title">Set a PIN for the delivery log</p>
+      <p class="lock-sub">This data stays only on this device and browser.</p>
+      <input type="password" id="setup-pin" inputmode="numeric" maxlength="6" placeholder="PIN (4–6 digits)">
+      <input type="text" id="setup-name" placeholder="Your name">
+      <button type="button" id="setup-submit">Create and unlock</button>
+      <p class="status err" id="setup-status"></p>
+    </div>
+    <div id="unlock-view" style="display:none">
+      <p class="lock-title">Enter PIN</p>
+      <input type="password" id="lock-input" inputmode="numeric" maxlength="6" placeholder="PIN">
+      <input type="text" id="lock-name" placeholder="Your name (for the record)">
+      <button type="button" id="lock-submit">Unlock</button>
+      <p class="status err" id="lock-status"></p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="app-content" style="display:none">
+  <header>
+    <div>
+      <h1>Imara Precast and Concrete</h1>
+      <p>Delivery log</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div id="role-badge"></div>
+      <div class="batch-mark" id="entry-count">0 trips logged</div>
+      <button type="button" id="export-btn" class="btn-ghost">Export CSV</button>
+      <button type="button" id="lock-btn" class="btn-ghost">Lock</button>
+    </div>
+  </header>
+
+  <div class="offline-note">Saves only to this browser on this device. Export a CSV backup regularly, and host this on GitHub Pages (like your tracker) rather than opening it as a downloaded file.</div>
+
+  <div class="metrics">
+    <div class="metric pos"><p class="label">Delivery revenue</p><p class="value" id="m-revenue">KES 0</p></div>
+    <div class="metric neg"><p class="label">Fuel + trip costs</p><p class="value" id="m-costs">KES 0</p></div>
+    <div class="metric"><p class="label">Net delivery margin</p><p class="value" id="m-net">KES 0</p></div>
+    <div class="metric"><p class="label">Trips logged</p><p class="value" id="m-trips">0</p></div>
+  </div>
+
+  <div class="panel" id="entry-panel">
+    <div class="panel-head"><h2>Log a delivery</h2></div>
+    <form id="trip-form">
+      <div class="row">
+        <div><label for="t-date">Date</label><input type="date" id="t-date" required></div>
+        <div><label for="t-truck">Truck / vehicle</label><input type="text" id="t-truck" placeholder="e.g. Truck 1, KBZ 123X" required></div>
+        <div><label for="t-driver">Driver</label><input type="text" id="t-driver" placeholder="Driver name"></div>
+        <div><label for="t-client">Client</label><input type="text" id="t-client" placeholder="Client or site name"></div>
+        <div><label for="t-location">Delivery location</label><input type="text" id="t-location" placeholder="e.g. Ruiru site"></div>
+      </div>
+      <div class="row">
+        <div><label for="t-product">Product delivered</label>
+          <select id="t-product">
+            <option>Paving blocks</option>
+            <option>Fencing posts</option>
+            <option>Ballast</option>
+            <option>Other concrete product</option>
+          </select>
+        </div>
+        <div><label for="t-qty">Quantity (note)</label><input type="text" id="t-qty" placeholder="e.g. 200 pieces"></div>
+        <div><label for="t-fee">Delivery fee charged (KES)</label><input type="number" id="t-fee" min="0" step="1" required></div>
+        <div><label for="t-fuel">Fuel cost (KES)</label><input type="number" id="t-fuel" min="0" step="1" required></div>
+        <div><label for="t-other">Other costs (KES)</label><input type="number" id="t-other" min="0" step="1" placeholder="Tolls, allowance, loading"></div>
+      </div>
+      <div class="submit-row"><button type="submit">Log delivery</button></div>
+      <p class="status" id="trip-status"></p>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h2>Trip log</h2></div>
+    <div class="filter-row">
+      <label for="period-filter">Show period:</label>
+      <select id="period-filter"></select>
+    </div>
+    <div id="ledger-wrap"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_ENTRIES = 'imara_delivery_entries';
+const STORAGE_AUTH = 'imara_delivery_auth';
+
+let entries = [];
+let actorName = 'Team member';
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+document.getElementById('t-date').value = todayStr();
+
+function fmt(n){ return 'KES ' + Math.round(n).toLocaleString('en-KE'); }
+function nowStr(){
+  const d = new Date();
+  return d.toISOString().slice(0,10) + ' ' + d.toTimeString().slice(0,5);
+}
+
+function lsGet(key){ try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
+function lsSet(key, value){ try{ localStorage.setItem(key, JSON.stringify(value)); return true; }catch(e){ return false; } }
+
+// ---------- AUTH ----------
+function initAuth(){
+  const auth = lsGet(STORAGE_AUTH);
+  document.getElementById(auth ? 'unlock-view' : 'setup-view').style.display = 'block';
+}
+
+document.getElementById('setup-submit').addEventListener('click', () => {
+  const pin = document.getElementById('setup-pin').value.trim();
+  const name = document.getElementById('setup-name').value.trim() || 'Team member';
+  const statusEl = document.getElementById('setup-status');
+  if(pin.length < 4){ statusEl.textContent = 'Use at least 4 digits.'; return; }
+  if(!lsSet(STORAGE_AUTH, { pin })){ statusEl.textContent = 'Could not save — browser storage may be full or blocked.'; return; }
+  actorName = name;
+  enterApp();
+});
+
+document.getElementById('lock-submit').addEventListener('click', () => {
+  const pin = document.getElementById('lock-input').value.trim();
+  const name = document.getElementById('lock-name').value.trim();
+  const statusEl = document.getElementById('lock-status');
+  const auth = lsGet(STORAGE_AUTH);
+  if(!auth){ statusEl.textContent = 'Setup not found — refresh and try again.'; return; }
+  if(pin !== auth.pin){ statusEl.textContent = 'Incorrect PIN.'; return; }
+  actorName = name || 'Team member';
+  enterApp();
+});
+
+document.getElementById('lock-btn').addEventListener('click', () => location.reload());
+
+function enterApp(){
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('app-content').style.display = 'block';
+  document.getElementById('role-badge').textContent = 'Signed in as ' + actorName;
+  loadEntries();
+}
+
+// ---------- DATA ----------
+function loadEntries(){ entries = lsGet(STORAGE_ENTRIES) || []; render(); }
+function saveEntries(){ return lsSet(STORAGE_ENTRIES, entries); }
+
+// ---------- RENDER ----------
+function periodOptions(){
+  const months = Array.from(new Set(entries.map(e => e.date.slice(0,7)))).sort().reverse();
+  const sel = document.getElementById('period-filter');
+  const current = sel.value;
+  const thisMonth = todayStr().slice(0,7);
+  let opts = '<option value="all">All time</option>';
+  months.forEach(m => { opts += '<option value="' + m + '">' + m + '</option>'; });
+  sel.innerHTML = opts;
+  if(current && (current === 'all' || months.includes(current))) sel.value = current;
+  else if(months.includes(thisMonth)) sel.value = thisMonth;
+  else sel.value = 'all';
+}
+
+function render(){
+  const revenue = entries.reduce((s,e) => s + e.fee, 0);
+  const costs = entries.reduce((s,e) => s + e.fuel + e.other, 0);
+  const net = revenue - costs;
+  document.getElementById('m-revenue').textContent = fmt(revenue);
+  document.getElementById('m-costs').textContent = fmt(costs);
+  document.getElementById('m-net').textContent = fmt(net);
+  document.getElementById('m-trips').textContent = entries.length;
+  document.getElementById('entry-count').textContent = entries.length + (entries.length === 1 ? ' trip logged' : ' trips logged');
+  periodOptions();
+  renderLedger();
+}
+
+function renderLedger(){
+  const period = document.getElementById('period-filter').value;
+  const filtered = period === 'all' ? entries : entries.filter(e => e.date.slice(0,7) === period);
+  const wrap = document.getElementById('ledger-wrap');
+  if(filtered.length === 0){ wrap.innerHTML = '<div class="empty">No deliveries logged for this period.</div>'; return; }
+
+  const sorted = [...filtered].sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+  let rows = '';
+  sorted.forEach(e => {
+    const margin = e.fee - e.fuel - e.other;
+    const badge = margin >= 0 ? '<span class="badge pos">' + fmt(margin) + '</span>' : '<span class="badge neg">' + fmt(margin) + '</span>';
+    const detail = e.truck + ' — ' + e.client + (e.location ? ' (' + e.location + ')' : '') +
+      '<div style="font-size:11px;color:var(--ink-soft);font-family:\'IBM Plex Sans\',sans-serif">' + e.product + (e.qtyNote ? ' · ' + e.qtyNote : '') + ' · Driver: ' + (e.driver || '—') + ' · Logged by ' + e.enteredBy + '</div>';
+    rows += '<tr><td>' + e.date + '</td><td class="name">' + detail + '</td><td>' + fmt(e.fee) + '</td><td>' + fmt(e.fuel + e.other) + '</td><td>' + badge + '</td><td><button class="del" data-id="' + e.id + '">Remove</button></td></tr>';
+  });
+  wrap.innerHTML = '<table><thead><tr><th>Date</th><th>Trip</th><th>Fee</th><th>Costs</th><th>Margin</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+
+  wrap.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      entries = entries.filter(e => e.id !== Number(btn.dataset.id));
+      render();
+      saveEntries();
+    });
+  });
+}
+
+document.getElementById('period-filter').addEventListener('change', renderLedger);
+
+document.getElementById('trip-form').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const entry = {
+    id: Date.now(),
+    date: document.getElementById('t-date').value,
+    truck: document.getElementById('t-truck').value.trim(),
+    driver: document.getElementById('t-driver').value.trim(),
+    client: document.getElementById('t-client').value.trim(),
+    location: document.getElementById('t-location').value.trim(),
+    product: document.getElementById('t-product').value,
+    qtyNote: document.getElementById('t-qty').value.trim(),
+    fee: Number(document.getElementById('t-fee').value) || 0,
+    fuel: Number(document.getElementById('t-fuel').value) || 0,
+    other: Number(document.getElementById('t-other').value) || 0,
+    enteredBy: actorName,
+    loggedAt: nowStr()
+  };
+  entries.push(entry);
+  render();
+  const status = document.getElementById('trip-status');
+  const ok = saveEntries();
+  status.textContent = ok ? 'Saved to this device.' : 'Could not save — browser storage may be full or blocked.';
+  status.className = 'status' + (ok ? '' : ' err');
+  ev.target.reset();
+  document.getElementById('t-date').value = todayStr();
+  setTimeout(() => status.textContent = '', 2500);
+});
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  const rows = [['Date','Truck','Driver','Client','Location','Product','Qty note','Fee (KES)','Fuel (KES)','Other costs (KES)','Margin (KES)','Entered by','Logged at']];
+  entries.forEach(e => {
+    rows.push([e.date, e.truck, e.driver, e.client, e.location, e.product, e.qtyNote, e.fee, e.fuel, e.other, e.fee - e.fuel - e.other, e.enteredBy, e.loggedAt]);
+  });
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'imara-delivery-log-' + todayStr() + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+});
+
+initAuth();
+</script>
+</body>
+</html>
